@@ -13,7 +13,7 @@
 
 ## 🔗 源码地址
 
- [GitHub仓库地址](xxxx)
+ [源码地址](https://gitee.com/szxio/online-classroom)
 
 ## 📸 系统截图展示
 
