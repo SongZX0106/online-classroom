@@ -5,13 +5,8 @@
       <div class="login-card">
         <h2>加入在线课堂</h2>
         <div class="input-group">
-          <el-input 
-            v-model="studentName" 
-            placeholder="请输入你的姓名" 
-            maxlength="20"
-            :prefix-icon="User"
-            @keyup.enter="joinClass"
-          />
+          <el-input v-model="studentName" placeholder="请输入你的姓名" maxlength="20" :prefix-icon="User"
+            @keyup.enter="joinClass" />
           <el-button type="primary" @click="joinClass" :disabled="!studentName.trim()">
             进入课堂
           </el-button>
@@ -19,7 +14,7 @@
         <p class="tip" v-if="nameError">{{ nameError }}</p>
       </div>
     </div>
-    
+
     <!-- 课程内容页面 -->
     <div v-else-if="hasJoined && !showErrorPage" class="class-container">
       <div class="header">
@@ -28,39 +23,43 @@
         </div>
         <div class="status-bar">
           <el-tag type="success" effect="dark" v-if="connected">
-            <el-icon><VideoCamera /></el-icon>
+            <el-icon>
+              <VideoCamera />
+            </el-icon>
             已连接
           </el-tag>
           <el-tag type="warning" effect="dark" v-else>
-            <el-icon><Loading /></el-icon>
+            <el-icon>
+              <Loading />
+            </el-icon>
             {{ statusMessage }}
           </el-tag>
           <el-tag type="info" effect="dark" class="student-count">
-            <el-icon><User /></el-icon>
+            <el-icon>
+              <User />
+            </el-icon>
             当前在线: {{ studentCount }} 人
           </el-tag>
         </div>
       </div>
-      
+
       <div class="video-wrapper">
         <div class="video-container">
           <video ref="videoRef" autoplay controls />
           <div v-if="!connected" class="connection-status">
-            <el-icon class="loading-icon"><Loading /></el-icon>
+            <el-icon class="loading-icon">
+              <Loading />
+            </el-icon>
             {{ statusMessage }}
           </div>
         </div>
       </div>
     </div>
-    
+
     <!-- 错误页面 -->
     <div v-else class="error-container">
       <div class="error-card">
-        <el-result
-          :icon="errorInfo.icon"
-          :title="errorInfo.title"
-          :sub-title="errorInfo.message"
-        >
+        <el-result :icon="errorInfo.icon" :title="errorInfo.title" :sub-title="errorInfo.message">
           <template #extra>
             <el-button type="primary" @click="retryConnection">重新连接</el-button>
             <el-button @click="goHome">返回首页</el-button>
@@ -110,7 +109,7 @@ function joinClass() {
     nameError.value = '请输入姓名'
     return
   }
-  
+
   nameError.value = ''
   hasJoined.value = true
   initializeConnection()
@@ -119,16 +118,16 @@ function joinClass() {
 // 初始化连接
 function initializeConnection() {
   const roomId = route.params.roomId
-  
+
   // 创建新的socket连接
   socket.value = io('http://localhost:3000')
-  
+
   // 监听房间用户变化
   socket.value.on('room-users', (users) => {
     console.log('房间用户更新:', users)
     onlineUsers.value = users
   })
-  
+
   // 监听被踢出
   socket.value.on('kicked', () => {
     ElMessage.error('您已被老师移出课堂')
@@ -136,11 +135,11 @@ function initializeConnection() {
     errorInfo.icon = 'error'
     errorInfo.title = '已被移出课堂'
     errorInfo.message = '您已被老师移出课堂，如有疑问请联系老师'
-    
+
     // 断开连接
     disconnectAll()
   })
-  
+
   // 监听课程结束
   socket.value.on('class-ended', () => {
     ElMessage.info('课程已结束')
@@ -148,11 +147,11 @@ function initializeConnection() {
     errorInfo.icon = 'info'
     errorInfo.title = '课程已结束'
     errorInfo.message = '老师已结束课程，感谢您的参与'
-    
+
     // 断开连接
     disconnectAll()
   })
-  
+
   socket.value.emit('join-room', { roomId, userName: studentName.value })
 
   // 创建一个变量存储 peer 实例
@@ -160,8 +159,8 @@ function initializeConnection() {
 
   // 先监听信号，等待老师的第一个信号后再创建 peer
   socket.value.on('signal', ({ from, signal }) => {
-    console.log('收到老师信号:', from, signal)
-    
+    console.log('收到老师信号:', from, signal, Date.now())
+
     try {
       if (!peer) {
         console.log('创建学生端 Peer')
@@ -172,31 +171,31 @@ function initializeConnection() {
           objectMode: true, // 启用对象模式
           sdpTransform: (sdp) => sdp // 禁用 SDP 转换
         })
-        
+
         peer.on('signal', data => {
           console.log('发送信号给老师:', from)
           socket.value.emit('signal', { to: from, from: socket.value.id, signal: data })
         })
-        
+
         peer.on('stream', stream => {
           console.log('收到视频流')
           videoRef.value.srcObject = stream
           connected.value = true
           statusMessage.value = '已连接'
         })
-        
+
         peer.on('error', err => {
           console.error('Peer 错误:', err)
           statusMessage.value = '连接错误，请刷新页面重试'
         })
-        
+
         peer.on('close', () => {
           console.log('连接已关闭')
           connected.value = false
           statusMessage.value = '连接已断开'
         })
       }
-      
+
       // 处理收到的信号
       peer.signal(signal)
     } catch (err) {
@@ -222,13 +221,13 @@ function disconnectAll() {
   if (socket.value) {
     socket.value.disconnect()
   }
-  
+
   if (videoRef.value && videoRef.value.srcObject) {
     const tracks = videoRef.value.srcObject.getTracks()
     tracks.forEach(track => track.stop())
     videoRef.value.srcObject = null
   }
-  
+
   connected.value = false
 }
 
@@ -361,8 +360,13 @@ video {
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* 错误页面 */
@@ -384,11 +388,13 @@ video {
 
 /* 响应式设计 */
 @media (max-width: 768px) {
-  .login-card, .error-card {
+
+  .login-card,
+  .error-card {
     width: 90%;
     padding: 20px;
   }
-  
+
   .video-container {
     height: calc(100vh - 150px);
   }

@@ -190,7 +190,7 @@ async function startClass() {
                 })
 
                 peer.on('signal', signal => {
-                    console.log('发送信号给学生:', id)
+                    console.log('发送信号给学生:', id, Date.now())
                     socket.emit('signal', { to: id, from: socket.id, signal })
                 })
 

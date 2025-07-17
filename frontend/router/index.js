@@ -7,6 +7,7 @@ const routes = [
     {
         path: '/',
         component: TeacherLive,
+        // component: () => import('../src/test/socketTest.vue'),
         name: 'teacher'
     },
     {
