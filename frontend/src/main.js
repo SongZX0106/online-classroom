@@ -5,6 +5,7 @@ import stream from 'stream-browserify'
 import util from 'util'
 import events from 'events'
 import assert from 'assert'
+import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
 // 全局注入
 window.Buffer = Buffer
@@ -25,6 +26,10 @@ import router from '../router/index.js'
 
 
 const app = createApp(App)
+
+for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+    app.component(key, component)
+}
 
 app.use(ElementPlus)
 app.use(router)

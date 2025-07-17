@@ -7,13 +7,17 @@ const routes = [
     {
         path: '/',
         component: TeacherLive,
-        // component: () => import('../src/test/socketTest.vue'),
         name: 'teacher'
     },
     {
         path: '/student/:roomId',
         component: StudentView,
         name: 'student'
+    },
+    {
+        path: '/test',
+        component: () => import('../src/test/emojiTest.vue'),
+        name: 'emojiTest'
     }
 ]
 
